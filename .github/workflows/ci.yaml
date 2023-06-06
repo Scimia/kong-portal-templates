@@ -1,0 +1,38 @@
+name: CI
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+
+env:
+  DOCKER_HOST: 'unix:///var/run/docker.sock'
+  COMPOSE_PROJECT_NAME: ${{ github.head_ref }}.${{ github.sha }}
+  # DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_KONGCLOUD_PULL_USR }}
+  # DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_KONGCLOUD_PULL_PSW }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: checkout kong portal tools
+        uses: actions/checkout@v3
+        with:
+          repository: Scimia/kong-portal-tools
+          path: kong-portal-tools
+          token: ${{ secrets.SCIMIA_BOT_GITHUB_TOKEN }}
+
+      - name: copy kong-portal-tools/kong-portal-ci to current dir
+        run: |
+          cp -a kong-portal-tools/kong-portal-ci/. .
+
+      - name: inspect files
+        run: |
+          ls -la
+          echo "COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
