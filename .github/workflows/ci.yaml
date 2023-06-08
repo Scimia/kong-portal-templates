@@ -9,10 +9,7 @@ on:
   #     - main
 
 env:
-  DOCKER_HOST: 'unix:///var/run/docker.sock'
-  COMPOSE_PROJECT_NAME: ${{ github.head_ref }}.${{ github.sha }}
-  # DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_KONGCLOUD_PULL_USR }}
-  # DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_KONGCLOUD_PULL_PSW }}
+  COMPOSE_PROJECT_NAME: kong-portal-ci
 
 jobs:
   build:
@@ -35,4 +32,4 @@ jobs:
       - name: inspect files
         run: |
           ls -la
-          echo "COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
+        working-directory: ${{ github.workspace }}
